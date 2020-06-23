@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t eliasbedmar/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true eliasbedmar/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t eliasbedmar/dockerstack-nginx ./nginx
+  - docker build -t eliasbedmar/dockerstack-client ./client
+  - docker build -t eliasbedmar/dockerstack-server ./server
+  - docker build -t eliasbedmar/dockerstack-worker ./worker
+  #Login to docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  #Take images and push to DockerHub
+  - docker push eliasbedmar/dockerstack-nginx
+  - docker push eliasbedmar/dockerstack-client
+  - docker push eliasbedmar/dockerstack-server
+  - docker push eliasbedmar/dockerstack-worker
