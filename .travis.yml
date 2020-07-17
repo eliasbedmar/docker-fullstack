@@ -20,3 +20,18 @@ after_success:
   - docker push eliasbedmar/dockerstack-client
   - docker push eliasbedmar/dockerstack-server
   - docker push eliasbedmar/dockerstack-worker
+
+
+deploy:
+  edge: true
+  provider: elasticbeanstalk
+  region: eu-west-2
+  app: multi-docker2
+  env: MultiDocker2-env
+  bucket_name: elasticbeanstalk-eu-west-2-260323852168
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
