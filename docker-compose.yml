@@ -21,9 +21,9 @@ services:
       dockerfile: Dockerfile.dev
       context: ./server
     volumes:
-      - /app/node_modules #don't try to map this path - leave as is
-      - ./server:/app #map anything inside /app in container to volume ./server except for bookmark above
-    environment: #Documentation from default values
+      - /app/node_modules
+      - ./server:/app
+    environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - PGUSER=postgres
@@ -31,8 +31,6 @@ services:
       - PGDATABASE=postgres
       - PGPASSWORD=postgres_password
       - PGPORT=5432
-    depends_on:
-      - postgres
   client:
     build:
       dockerfile: Dockerfile.dev
@@ -40,14 +38,13 @@ services:
     volumes:
       - /app/node_modules
       - ./client:/app
-    stdin_open: true
   worker:
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     build:
       dockerfile: Dockerfile.dev
       context: ./worker
     volumes:
       - /app/node_modules
       - ./worker:/app
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
